@@ -14,16 +14,17 @@ It is often useful to centralize log data from different sources as it gets gene
 
 ## Setup Overview
 
-Lambda function is written in Node.js. Since we don't have a specific dependency, that is not in the default libraries in Lambda, a Lambda deployment package is not required. Instead we can use the inline editor in Lambda. You can create a new Lambda function, and copy the code in index.js in this repository to your function.
+Lambda function is written in Node.js. Since we don't have a dependency on a specific version of library, we rely on the defaults provided by Lambda. Correspoindingly a Lambda deployment package is not required. Instead we can use the inline editor in Lambda. You can create a new Lambda function, and copy the code in index.js in this repository to your function.
 
 ### Pre-requisite
 
 * S3 bucket where ELB logs can be archived to.
 * Enable archiving of ELB access logs in S3.
 
+
 ### Triggers
 
-* The Lambda fucntion is triggered at an S3 'ObjectCreated' event type
+* The Lambda function is triggered at an S3 'ObjectCreated' event type
 * You need to also provide the S3 bucket where the ELB logs will be delivered
 
 ### Authorization
