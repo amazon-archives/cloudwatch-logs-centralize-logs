@@ -81,7 +81,11 @@ Since there is a need here for various AWS services making calls to each other, 
   * We check for the existence of the specified log group and stream using the describeLogGroups and describeLogStreams. If        not found, we create the group and stream. 
   * When the log steam is existing, we use the sequenceToken during the putLogEvents call.
     
-### Lambda Configurtion
+### Lambda Configuration
 
 This Lambda function was created with runtime Node.js 4.3. It has been tested with 128 KB and 3 second timeout. No VPC was used. You can change the number based on your testing.
 
+## Known Limitations
+
+This Lambda function has the following limitation:
+* Currently describeLogStreams is called at every Lambda invocation. But describeLogStreams has a limit of 5 transactions per second (TPS/account/region). This can be resolved by modifying the Lambda function to create log group and log stream only if we get a ResourceNotFound error from calling putLogEvents.
