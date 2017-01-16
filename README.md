@@ -74,6 +74,7 @@ Since there is a need here for various AWS services making calls to each other, 
 
 ***Instructions:***
 
+* There are two lambda functions. Index.js for compressed logs from Application Load Balancer type and classic-index.js for uncompressed logs from Classic Load Balancer type.
 * Handler: The name of the main code file. In this example we have used index as the name of the handler.
 * The Lambda function reads the data from the S3 object using the S3 getObject API. The data is encoded and compresses.
 * The Lambda function decodes and decompresses the data using the zlib library

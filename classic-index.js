@@ -8,12 +8,13 @@ const cloudWatchLogs = new aws.CloudWatchLogs({
 });
 
 //specifying the log group and the log stream name for CloudWatch Logs
-const logGroupName = 'apache-alb-logs' //Name of the log group goes here;
-const logStreamName = 'apache-alb-stream' //Name of the log stream goes here;
+const logGroupName = 'classic-elb-logs' //Name of the log group goes here;
+const logStreamName = 'classic-elb-stream' //Name of the log stream goes here;
 
 exports.handler = (event, context, callback) => {
 
     // Get the object from the event and show its content type
+    console.log('S3 object is:', event.Records[0].s3);
     const bucket = event.Records[0].s3.bucket.name;
     console.log('Name of S3 bucket is:', bucket);
     const key = decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, ' '));
@@ -28,18 +29,12 @@ exports.handler = (event, context, callback) => {
             console.log(message);
             callback(message);
         } else {
-            //uncompressing the S3 data
-            zlib.gunzip(data.Body, function(error, buffer){
-                if (error) {
-                    console.log('Error uncompressing data', error);
-                    return;
-                }
-                
-                var logData = buffer.toString('ascii');
+            console.log('Data is:', data);
+            if (data.Body) {
+                var logData = data.Body.toString('ascii');
                 //manage the log group, streams and push log events to CloudWatch Logs
                 manageLogGroups(logData);
-               
-            });
+            }
             callback(null, data.ContentType);
         }
     });
