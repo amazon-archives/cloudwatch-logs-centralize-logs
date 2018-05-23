@@ -91,7 +91,7 @@ exports.handler = (event, context, callback) => {
     
     //Manage the log stream and get the sequenceToken
     function manageLogStreams(logData, count) {
-        var count = count || 10;
+        var count = count || 6;
 
             var describeLogStreamsParams = {
                 logGroupName: logGroupName,
@@ -112,7 +112,7 @@ exports.handler = (event, context, callback) => {
         .catch(err => {
             if (err.code === 'ThrottlingException') {
             count--;
-            if (count > 1) {
+            if (count > 0) {
                 // wait 1 second before retry
                 console.log('ThrottlingException Retry:', count);
                 setTimeout(manageLogStreams(logData, count), 1000);
