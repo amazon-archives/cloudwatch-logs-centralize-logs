@@ -90,27 +90,40 @@ exports.handler = (event, context, callback) => {
     }
     
     //Manage the log stream and get the sequenceToken
-    function manageLogStreams (logData) {
-        var describeLogStreamsParams = {
-            logGroupName: logGroupName,
-            logStreamNamePrefix: logStreamName 
-        }
-        
-        //check if the log stream already exists and get the sequenceToken
-        cloudWatchLogs.describeLogStreams (describeLogStreamsParams, function (err, data) {
-            if (err) {
-                console.log ('Error during describe log streams:', err);
+    function manageLogStreams(logData, count) {
+        var count = count || 6;
+
+            var describeLogStreamsParams = {
+                logGroupName: logGroupName,
+                logStreamNamePrefix: logStreamName 
+        };
+            
+        cloudWatchLogs.describeLogStreams(describeLogStreamsParams).promise()
+        .then(data => {
+            if (!data.logStreams[0]) {
+                console.log('Need to  create log stream:', data);
                 //create log stream
                 createLogStream(logData);
             } else {
-                if (!data.logStreams[0]) {
-                    console.log ('Need to  create log stream:', data);
-                    //create log stream
-                    createLogStream(logData);
-                } else {
-                    console.log ('Log Stream already defined:', logStreamName);
-                    putLogEvents (data.logStreams[0].uploadSequenceToken, logData);
+                console.log('Log Stream already defined:', logStreamName);
+                putLogEvents(data.logStreams[0].uploadSequenceToken, logData);
+            }
+        })
+        .catch(err => {
+            if (err.code === 'ThrottlingException') {
+            count--;
+            if (count > 0) {
+                // wait 1 second before retry
+                console.log('ThrottlingException Retry:', count);
+                setTimeout(manageLogStreams(logData, count), 1000);
+            } else {
+                console.log('ThrottlingException: Too many retries');
+                callback('Error Throttling. Too many attempts');
                 }
+            } else {
+                console.log('Error during describe log streams:', err);
+                //create log stream
+                createLogStream(logData);
             }
         });
     }
