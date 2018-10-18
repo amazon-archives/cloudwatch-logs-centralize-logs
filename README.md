@@ -70,7 +70,7 @@ Since there is a need here for various AWS services making calls to each other, 
 ***Configurable parameters:***
 
 * Log Group Name: Name of the log group in CloudWatch Logs in which the logs will be published
-* Log Steram Name: Name of the log stream within the log group
+* Log Stream Name: Name of the log stream within the log group
 
 ***Instructions:***
 
